@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+	<title>TestChannel</title>
+	<link rel="self" href="https://www.test.xyz"/>
+	<link href="https://www.test.xyz"/>
+	<id>TestChannel</id>
+	<updated>2021-11-08T17:07:02+00:00</updated>
+
+	<entry>
+		<title type="html">Test Article</title>
+		<link href="https://www.test.xyz/test"/>
+		<id>1</id>
+		<updated>2021-11-07T17:00:00+00:00</updated>
+		<content type="html"></content>
+		<author>
+			<name>Test User</name>
+		</author>
+	</entry>
+
+	<entry>
+		<title type="html">When you get the smonk</title>
+		<link href="https://dy5on.bandcamp.com/track/up-in-smoke-hardcore-mix"/>
+		<id>2</id>
+		<updated>2021-11-07T17:00:00+00:00</updated>
+		<content type="html"></content>
+		<author>
+			<name>dy5on</name>
+		</author>
+	</entry>
+</feed>

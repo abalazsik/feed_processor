@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"> 
+  <channel>
+  <title>TestChannel</title>
+  <link>https://www.test.xyz</link>
+  <description>TestChannel</description>
+    <item>
+      <title>Test Article</title>
+      <link>https://www.test.xyz/test</link>
+      <description>Test Article</description>
+      <category>Test Category</category>
+      <pubDate>Sat, 07 Nov 2021 17:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>When you get the smonk</title>
+      <link>https://dy5on.bandcamp.com/track/up-in-smoke-hardcore-mix</link>
+      <description>When you get the smonk</description>
+      <category>Test Category</category>
+      <pubDate>Sat, 07 Nov 2021 23:00:00 GMT</pubDate>
+    </item>
+    </channel>
+</rss>
