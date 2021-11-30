@@ -31,7 +31,11 @@ parsePubDate_test_() ->
         ?_assertEqual({{2021, 11, 03}, {14, 00, 00}}, feed_processor:parsePubDate(pubDate, <<"Wed, 03 Nov 2021 14:00:00 GMT">>)),
         ?_assertEqual({{2021, 9, 5}, {3, 12, 26}}, feed_processor:parsePubDate(pubDate, <<"Fri, 05 Sep 2021 03:12:26 GMT">>)),
         ?_assertEqual({{2021, 11, 6}, {8, 51, 15}}, feed_processor:parsePubDate(pubDate, <<"Sat, 06 Nov 2021 08:51:15 +0100">>)),
-        
+        ?_assertEqual({{2021, 11, 30}, {9, 16, 36}}, feed_processor:parsePubDate(pubDate, <<"Tue, 30 Nov 2021 09:16:36 +0000">>)),
+        ?_assertEqual({{2021, 12, 31}, {19, 16, 36}}, feed_processor:parsePubDate(pubDate, <<"Fri, 31 Dec 2021 19:16:36 +0000">>)),
+
+        ?_assertEqual({wrong_format, pubDate, <<"Tue, 32 Nov 2021 19:16:36 +0000">>}, feed_processor:parsePubDate(pubDate, <<"Tue, 32 Nov 2021 19:16:36 +0000">>)),
+
         ?_assertEqual({{2021, 10, 24}, {18, 48, 12}}, feed_processor:parsePubDate(iso, <<"2021-10-24T18:48:12+00:00">>)),
         ?_assertEqual({{2021, 9, 09}, {0, 32, 20}}, feed_processor:parsePubDate(iso, <<"2021-09-09T00:32:20+00:00">>)),
         ?_assertEqual({{2003, 12, 13}, {18, 30, 2}}, feed_processor:parsePubDate(iso, <<"2003-12-13T18:30:02Z">>))
