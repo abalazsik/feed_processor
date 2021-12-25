@@ -1,5 +1,9 @@
 -module(feed_processor).
--export([extract/1, parsePubDate/2]).
+-export([extract/1]).
+
+-ifdef(TEST).
+-export([parsePubDate/2]).
+-endif.
 
 -include_lib("xmerl/include/xmerl.hrl").
 
@@ -7,7 +11,7 @@
     {
         Title :: string(),
         Url :: string(),
-        Category :: string(),
+        Categories :: [string()],
         PubDate :: calendar:datetime()
     }]].
 
@@ -22,17 +26,17 @@ extract(String) when is_list(String) ->
                 fun
                     (Item) when Item#xmlElement.name == item -> %% process rss feed
                         Elems = Item#xmlElement.content,
-                        Title = asText(getNodeValue(Elems, title)),
-                        Url = asText(getNodeValue(Elems, link)),
-                        Category = asText(getNodeValue(Elems, category, [])),
-                        PubDate = parsePubDate(pubDate, asText(getNodeValue(Elems, pubDate))),
-                        {Title, Url, Category, PubDate};
+                        Title = asText(getNodeContent(Elems, title)),
+                        Url = asText(getNodeContent(Elems, link)),
+                        Categories = getCategories(Elems),
+                        PubDate = parsePubDate(pubDate, asText(getNodeContent(Elems, pubDate))),
+                        {Title, Url, Categories, PubDate};
                     (Entry) when Entry#xmlElement.name == entry -> %%process atom feed
                         Elems = Entry#xmlElement.content,
-                        Title = asText(getNodeValue(Elems, title)),
+                        Title = asText(getNodeContent(Elems, title)),
                         UrlElem = getNode(Elems, link),
                         Url = asText(getAttrib(UrlElem#xmlElement.attributes, href)),
-                        PubDate = parsePubDate(iso, asText(getNodeValue(Elems, updated))),
+                        PubDate = parsePubDate(iso, asText(getNodeContent(Elems, updated))),
                         {Title, Url, [], PubDate}
                 end,
                 getItems(Items)
@@ -67,16 +71,9 @@ getNode([Elem | Elements], Name) ->
             getNode(Elements, Name)
     end.
 
-getNodeValue(Elements, Name) ->
+getNodeContent(Elements, Name) ->
     Node = getNode(Elements, Name),
     Node#xmlElement.content.
-
-getNodeValue(Elements, Name, Default) ->
-    try
-        getNodeValue(Elements, Name)
-    catch
-        {elem_not_exists, _} -> Default
-    end.
 
 getItems(Channel) -> 
     lists:filter(
@@ -106,6 +103,9 @@ asText(Text) when length(Text) > 1 ->
     unicode:characters_to_list(Text);
 asText([TextNode]) when is_record(TextNode, xmlText) ->
     unicode:characters_to_list(TextNode#xmlText.value).
+
+getCategories(Elems) ->
+    [asText(getNodeContent([Elem], category)) || Elem <- Elems, Elem#xmlElement.name == category].
 
 monthNumber(Month) ->
     maps:get(Month, #{

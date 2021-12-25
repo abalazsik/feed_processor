@@ -8,14 +8,16 @@
       <title>Test Article</title>
       <link>https://www.test.xyz/test</link>
       <description>Test Article</description>
-      <category>Test Category</category>
+      <category>Test Category1</category>
+      <category>Test Category2</category>
       <pubDate>Sat, 07 Nov 2021 17:00:00 GMT</pubDate>
     </item>
     <item>
       <title>When you get the smonk</title>
       <link>https://dy5on.bandcamp.com/track/up-in-smoke-hardcore-mix</link>
       <description>When you get the smonk</description>
-      <category>Test Category</category>
+      <category>Music</category>
+      <category>shitpost</category>
       <pubDate>Sat, 07 Nov 2021 23:00:00 GMT</pubDate>
     </item>
     </channel>

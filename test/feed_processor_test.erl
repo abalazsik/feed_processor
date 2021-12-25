@@ -5,7 +5,7 @@
 atom_test_() ->
     {ok, Bin} = file:read_file("./test/testAtomFeed.xml"),
     [Result] = feed_processor:extract(Bin),
-    [{Title, Url, Category, PubDate}, _] = Result,
+    [{Title, Url, [], PubDate}, _] = Result,
     [
         ?_assertEqual(2, length(Result)),
         ?_assertEqual("Test Article", Title),
@@ -17,12 +17,12 @@ atom_test_() ->
 rss_test_() ->
     {ok, Bin} = file:read_file("./test/testRssFeed.xml"),
     [Result] = feed_processor:extract(Bin),
-    [{Title, Url, Category, PubDate}, _] = Result,
+    [{Title, Url, Categories, PubDate}, _] = Result,
     [
         ?_assertEqual(2, length(Result)),
         ?_assertEqual("Test Article", Title),
         ?_assertEqual("https://www.test.xyz/test", Url),
-        ?_assertEqual("Test Category", Category),
+        ?_assertEqual(["Test Category1", "Test Category2"], Categories),
         ?_assertEqual({{2021, 11, 7}, {17, 0, 0}}, PubDate)
     ].
 
