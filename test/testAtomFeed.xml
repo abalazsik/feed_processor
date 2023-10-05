@@ -9,7 +9,8 @@
 
 	<entry>
 		<title type="html">Test Article</title>
-		<link href="https://www.test.xyz/test"/>
+		<link href="https://www.test.xyz/test/comments" rel="replies"/>
+		<link href="https://www.test.xyz/test" rel="alternate"/>
 		<id>1</id>
 		<updated>2021-11-07T17:00:00+00:00</updated>
 		<content type="html"></content>

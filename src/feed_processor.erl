@@ -9,9 +9,9 @@
 
 -spec extract(string() | binary()) -> [[
     {
-        Title :: string(),
-        Url :: string(),
-        Categories :: [string()],
+        Title :: binary(),
+        Url :: binary(),
+        Categories :: [binary()],
         PubDate :: calendar:datetime()
     }]].
 
@@ -34,8 +34,8 @@ extract(String) when is_list(String) ->
                     (Entry) when Entry#xmlElement.name == entry -> %%process atom feed
                         Elems = Entry#xmlElement.content,
                         Title = asText(getNodeContent(Elems, title)),
-                        UrlElem = getNode(Elems, link),
-                        Url = asText(getAttrib(UrlElem#xmlElement.attributes, href)),
+                        LinkElem = getLink(Elems),
+                        Url = asText(getAttrib(LinkElem#xmlElement.attributes, href, [])),
                         PubDate = parsePubDate(iso, asText(getNodeContent(Elems, updated))),
                         {Title, Url, [], PubDate}
                 end,
@@ -51,14 +51,14 @@ getDoc({Doc, _}) when is_record(Doc, xmlElement) ->
         true -> Doc#xmlElement.content
     end.
 
-getAttrib([], Name) ->
-    throw({attribute_not_exists, Name});
-getAttrib([Elem | Elements], Name) ->
-    case (Elem) of
-        Elem when is_record(Elem, xmlAttribute) andalso Elem#xmlAttribute.name == Name ->
-            Elem#xmlAttribute.value;
+getAttrib([], _, Default) ->
+    Default;
+getAttrib([Attribute | Attributes], Name, Default) ->
+    case (Attribute) of
+        Attribute when is_record(Attribute, xmlAttribute) andalso Attribute#xmlAttribute.name == Name ->
+            Attribute#xmlAttribute.value;
         _ ->
-            getAttrib(Elements, Name)
+            getAttrib(Attributes, Name, Default)
     end.
 
 getNode([], Name) ->
@@ -70,6 +70,32 @@ getNode([Elem | Elements], Name) ->
         _ ->
             getNode(Elements, Name)
     end.
+
+
+getLink(Elems) ->
+    getLink(Elems, unknown).
+
+%%return the link element where rel == "alternate" if it exists otherwise the first link element
+getLink([], unknown) ->
+    throw({no_link_element});
+getLink([], Candidate) ->
+    Candidate;
+getLink([Elem | Elements], Candidate) ->
+    case (Elem) of
+        Elem when is_record(Elem, xmlElement) andalso Elem#xmlElement.name == link ->
+            case getAttrib(Elem#xmlElement.attributes, rel, unknown) of
+                "alternate" ->
+                    Elem;
+                _ ->
+                    NewCandidate = case Candidate of
+                        unknown -> Elem;
+                        _ -> Candidate
+                    end,
+                    getLink(Elements, NewCandidate)
+            end;
+        _ ->
+            getLink(Elements, Candidate)
+    end.        
 
 getNodeContent(Elements, Name) ->
     Node = getNode(Elements, Name),
@@ -98,11 +124,11 @@ getChannels(Elements) ->
         Elements).
 
 asText([]) ->
-    [];
+    <<>>;
 asText(Text) when length(Text) > 1 ->
-    unicode:characters_to_list(Text);
+    unicode:characters_to_binary(Text);
 asText([TextNode]) when is_record(TextNode, xmlText) ->
-    unicode:characters_to_list(TextNode#xmlText.value).
+    unicode:characters_to_binary(TextNode#xmlText.value).
 
 getCategories(Elems) ->
     [asText(getNodeContent([Elem], category)) || Elem <- Elems, Elem#xmlElement.name == category].
@@ -126,7 +152,7 @@ monthNumber(Month) ->
 timestampRegex(pubDate) ->
     "(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s(?<day>([012]\\d)|(3[01]))\\s(?<month>Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s(?<year>\\d{4})\\s(?<hour>[0-2]\\d):(?<min>[0-5]\\d):(?<sec>[0-5]\\d)\\s(([A-Z]{3})|((\\+|\\-)\\d{4}))";
 timestampRegex(iso) ->
-    "(?<year>\\d{4})-(?<month>[0-1]\\d)-(?<day>([012]\\d)|(3[01]))T(?<hour>[0-2]\\d):(?<min>[0-6]\\d):(?<sec>[0-6]\\d)(([A-Z]+)|((\\+|\\-)\\d{2}:\\d{2}))".
+    "(?<year>\\d{4})-(?<month>(0\\d|1[012]))-(?<day>([012]\\d)|(3[01]))T(?<hour>[0-2]\\d):(?<min>[0-6]\\d):(?<sec>[0-6]\\d)(.[\\d]{0,3}){0,1}(([A-Z]+)|((\\+|\\-)\\d{2}:\\d{2}))".
 
 parsePubDate(ExpectedFormat, Bin) ->
     Regex = timestampRegex(ExpectedFormat),
