@@ -150,7 +150,7 @@ monthNumber(Month) ->
     }). 
 
 timestampRegex(pubDate) ->
-    "(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s(?<day>([012]\\d)|(3[01]))\\s(?<month>Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s(?<year>\\d{4})\\s(?<hour>[0-2]\\d):(?<min>[0-5]\\d):(?<sec>[0-5]\\d)\\s(([A-Z]{3})|((\\+|\\-)\\d{4}))";
+    "(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s(?<day>([012]?\\d)|(3[01]))\\s(?<month>Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s(?<year>\\d{4})\\s(?<hour>[0-2]\\d):(?<min>[0-5]\\d):(?<sec>[0-5]\\d)\\s(([A-Z]{3})|((\\+|\\-)\\d{4}))";
 timestampRegex(iso) ->
     "(?<year>\\d{4})-(?<month>(0\\d|1[012]))-(?<day>([012]\\d)|(3[01]))T(?<hour>[0-2]\\d):(?<min>[0-6]\\d):(?<sec>[0-6]\\d)(.[\\d]{0,3}){0,1}(([A-Z]+)|((\\+|\\-)\\d{2}:\\d{2}))".
 

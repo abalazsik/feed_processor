@@ -33,6 +33,7 @@ parsePubDate_test_() ->
         ?_assertEqual({{2021, 11, 6}, {8, 51, 15}}, feed_processor:parsePubDate(pubDate, <<"Sat, 06 Nov 2021 08:51:15 +0100">>)),
         ?_assertEqual({{2021, 11, 30}, {9, 16, 36}}, feed_processor:parsePubDate(pubDate, <<"Tue, 30 Nov 2021 09:16:36 +0000">>)),
         ?_assertEqual({{2021, 12, 31}, {19, 16, 36}}, feed_processor:parsePubDate(pubDate, <<"Fri, 31 Dec 2021 19:16:36 +0000">>)),
+		?_assertEqual({{2025, 5, 6},{00, 00, 00}}, feed_processor:parsePubDate(pubDate, <<"Tue, 6 May 2025 00:00:00 +0000">>)),  %one digit day number
 
         ?_assertEqual({wrong_format, pubDate, <<"Tue, 32 Nov 2021 19:16:36 +0000">>}, feed_processor:parsePubDate(pubDate, <<"Tue, 32 Nov 2021 19:16:36 +0000">>)),
 
